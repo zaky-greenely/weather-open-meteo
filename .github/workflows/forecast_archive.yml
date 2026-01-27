@@ -8,6 +8,9 @@ on:
   # Allow manual trigger from GitHub UI
   workflow_dispatch:
 
+permissions:
+  contents: write  # Allow workflow to push changes
+
 jobs:
   collect-forecast:
     runs-on: ubuntu-latest
