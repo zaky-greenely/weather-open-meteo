@@ -1,0 +1,52 @@
+name: SMHI Forecast Archive
+
+on:
+  schedule:
+    # Run every 6 hours (at 00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+
+  # Allow manual trigger from GitHub UI
+  workflow_dispatch:
+
+jobs:
+  collect-forecast:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for proper git operations
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Run forecast archive script
+      run: |
+        python3 SMHI_forecast_archive.py
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+
+        # Add the archive file
+        git add smhi_forecast_archive.csv
+
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update SMHI forecast archive - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          git push
+        fi
+
+    - name: Archive statistics
+      if: always()
+      run: |
+        if [ -f smhi_forecast_archive.csv ]; then
+          echo "Archive file size: $(du -h smhi_forecast_archive.csv | cut -f1)"
+          echo "Total entries: $(wc -l < smhi_forecast_archive.csv)"
+        fi

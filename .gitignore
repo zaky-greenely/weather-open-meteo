@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary data files (keep only the archive)
+smhi_data.json
+smhi_forecast_data.json
+open_meteo_sample.json
+
+# Output CSVs (except the archive which we want to commit)
+open_meteo_hourly.csv
+smhi_weather.csv
+smhi_forecast.csv
+
+# Keep the archive file - we want this tracked!
+!smhi_forecast_archive.csv
